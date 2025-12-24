@@ -47,6 +47,17 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
+      - name: Create Release Notes File
+        run: |
+          mkdir -p app/build
+          cat > app/build/release-notes.txt << EOF
+          BuildType: ${{ inputs.buildType }}
+          Branch: ${{ github.ref_name }}
+          Description: ${{ inputs.releaseNotes }}
+          Author: ${{ github.actor }}
+          Groups: ${{ inputs.testerGroups }}
+          EOF
+
       - name: Build and Upload to Firebase
         env:
           BUILD_TYPE: ${{ inputs.buildType }}
