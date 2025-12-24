@@ -76,21 +76,6 @@ get_git_author() {
     git config user.name 2>/dev/null || echo "Unknown Author"
 }
 
-get_version_name() {
-    if [ -f "$BUILD_GRADLE" ]; then
-        grep -oP 'versionName\s*=\s*"\K[^"]+' "$BUILD_GRADLE" 2>/dev/null || echo "unknown"
-    else
-        echo "unknown"
-    fi
-}
-
-get_version_code() {
-    if [ -f "$BUILD_GRADLE" ]; then
-        grep -oP 'versionCode\s*=\s*\K\d+' "$BUILD_GRADLE" 2>/dev/null || echo "unknown"
-    else
-        echo "unknown"
-    fi
-}
 
 # ==============================================================================
 # 4. INTERACTIVE COMPONENT LIBRARY
@@ -278,30 +263,26 @@ INFO_2="${INFO_1}\n  ${GREEN}${ICON_SUCCESS}${RESET} Description: $DESCRIPTION"
 
 # --- Step 3: Select Groups ---
 show_multi_select_menu "Select tester group(s)" "$INFO_2" "${DEFAULT_TESTER_GROUPS[@]}"
-GROUPS="$MENU_RESULT"
+SELECTED_GROUPS="$MENU_RESULT"
 
 # --- Step 4: Gather Information ---
 GIT_BRANCH=$(get_git_branch)
 GIT_AUTHOR=$(get_git_author)
-VERSION_NAME=$(get_version_name)
-VERSION_CODE=$(get_version_code)
 
 SUMMARY_TEXT="    Build Type   $BUILD_TYPE
     Description  $DESCRIPTION
-    Groups       $GROUPS
+    Groups       $SELECTED_GROUPS
     Branch       $GIT_BRANCH
-    Author       $GIT_AUTHOR
-    Version      $VERSION_NAME ($VERSION_CODE)"
+    Author       $GIT_AUTHOR"
 
 # --- Step 5: Save Release Notes ---
 mkdir -p "$RELEASE_NOTES_DIR"
 cat > "$RELEASE_NOTES_FILE" << EOF
 BuildType: $BUILD_TYPE
-Version: $VERSION_NAME
 Branch: $GIT_BRANCH
 Description: $DESCRIPTION
 Author: $GIT_AUTHOR
-Groups: $GROUPS
+Groups: $SELECTED_GROUPS
 EOF
 
 # --- Step 6: Confirmation ---
