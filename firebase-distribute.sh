@@ -32,13 +32,9 @@ DEFAULT_TESTER_GROUPS=("qa" "qa-team" "devs") # Default options for the group se
 # 2. VISUAL STYLING
 # ==============================================================================
 # ANSI Color Codes
-MAGENTA='\033[35m'
-BLUE='\033[34m'
-CYAN='\033[36m'
+ORANGE='\033[38;5;208m'
 WHITE='\033[97m'
 DARK_GRAY='\033[90m'
-GREEN='\033[32m'
-YELLOW='\033[33m'
 RED='\033[31m'
 RESET='\033[0m'
 BOLD='\033[1m'
@@ -55,7 +51,14 @@ ICON_ARROW='›'
 # UI Helpers
 show_banner() {
     echo ""
-    echo -e "  ${MAGENTA}${ICON_STAR}${RESET} ${BLUE}Firebase${RESET} ${CYAN}App ${MAGENTA}Distribution${RESET}"
+    echo -e "${ORANGE}${BOLD}"
+    echo "  ________ _______  _______  _______  _______  _______  _______  _______"
+    echo " /  _____/|       ||       ||       ||       ||   _   ||       ||       |"
+    echo "|   __|  |   _   ||    ___||    ___||   _   ||  |_|  ||   _   ||    ___|"
+    echo "|  |     |  | |  ||   |___ |   |___ |  | |  ||       ||  | |  ||   |___"
+    echo "|__|     |__| |__||_______||_______||__| |__||___|___||__| |__||_______|"
+    echo -e "${RESET}"
+    echo -e "                            ${BOLD}App Distribution${RESET}"
     echo ""
 }
 
@@ -115,12 +118,12 @@ show_single_select_menu() {
         [ -n "$prev_info" ] && { echo -e "$prev_info"; echo ""; }
         
         echo -e "  ${WHITE}$title${RESET}"
-        echo -e "  ${DARK_GRAY}Use ${CYAN}arrows${DARK_GRAY} to navigate, ${CYAN}Enter${DARK_GRAY} to select${RESET}"
+        echo -e "  ${DARK_GRAY}Use ${ORANGE}arrows${DARK_GRAY} to navigate, ${ORANGE}Enter${DARK_GRAY} to select${RESET}"
         echo ""
         
         for i in "${!options[@]}"; do
             if [ $i -eq $selected_index ]; then
-                echo -e "    ${MAGENTA}${ICON_FILLED}${RESET} ${WHITE}${options[$i]}${RESET}"
+                echo -e "    ${ORANGE}${ICON_FILLED}${RESET} ${WHITE}${options[$i]}${RESET}"
             else
                 echo -e "    ${DARK_GRAY}${ICON_EMPTY} ${options[$i]}${RESET}"
             fi
@@ -158,13 +161,13 @@ show_multi_select_menu() {
         [ -n "$prev_info" ] && { echo -e "$prev_info"; echo ""; }
         
         echo -e "  ${WHITE}$title${RESET}"
-        echo -e "  ${DARK_GRAY}Use ${CYAN}arrows${DARK_GRAY} to navigate, ${CYAN}Space${DARK_GRAY} to toggle, ${CYAN}Enter${DARK_GRAY} to confirm${RESET}"
+        echo -e "  ${DARK_GRAY}Use ${ORANGE}arrows${DARK_GRAY} to navigate, ${ORANGE}Space${DARK_GRAY} to toggle, ${ORANGE}Enter${DARK_GRAY} to confirm${RESET}"
         echo ""
         
         for i in "${!options[@]}"; do
             local icon="${ICON_CHECKBOX_OFF}"
             local color="${DARK_GRAY}"
-            [ ${selected[$i]} -eq 1 ] && { icon="${ICON_CHECKBOX_ON}"; color="${MAGENTA}"; }
+            [ ${selected[$i]} -eq 1 ] && { icon="${ICON_CHECKBOX_ON}"; color="${ORANGE}"; }
             
             if [ $i -eq $selected_index ]; then
                 echo -e "    ${color}${icon}${RESET} ${WHITE}${options[$i]}${RESET}"
@@ -212,9 +215,9 @@ show_confirm_menu() {
         echo ""
         
         if [ $selected_index -eq 0 ]; then
-            echo -e "    ${MAGENTA}${ICON_FILLED}${RESET} ${WHITE}Yes${RESET}     ${DARK_GRAY}${ICON_EMPTY} No${RESET}"
+            echo -e "    ${ORANGE}${ICON_FILLED}${RESET} ${WHITE}Yes${RESET}     ${DARK_GRAY}${ICON_EMPTY} No${RESET}"
         else
-            echo -e "    ${DARK_GRAY}${ICON_EMPTY} Yes${RESET}     ${MAGENTA}${ICON_FILLED}${RESET} ${WHITE}No${RESET}"
+            echo -e "    ${DARK_GRAY}${ICON_EMPTY} Yes${RESET}     ${ORANGE}${ICON_FILLED}${RESET} ${WHITE}No${RESET}"
         fi
         
         case $(read_key) in
@@ -238,9 +241,9 @@ show_text_input() {
     [ -n "$prev_info" ] && { echo -e "$prev_info"; echo ""; }
     
     echo -e "  ${WHITE}$prompt${RESET}"
-    echo -e "  ${DARK_GRAY}Press ${CYAN}Enter${DARK_GRAY} for default${RESET}"
+    echo -e "  ${DARK_GRAY}Press ${ORANGE}Enter${DARK_GRAY} for default${RESET}"
     echo ""
-    echo -e -n "    ${MAGENTA}${ICON_ARROW}${RESET} "
+    echo -e -n "    ${ORANGE}${ICON_ARROW}${RESET} "
     
     read -r user_input
     MENU_RESULT="${user_input:-$default_value}"
@@ -254,12 +257,12 @@ show_text_input() {
 # --- Step 1: Select Build Type ---
 show_single_select_menu "Select build type" "" "Debug" "Release"
 BUILD_TYPE="$MENU_RESULT"
-INFO_1="  ${GREEN}${ICON_SUCCESS}${RESET} Build type: $BUILD_TYPE"
+INFO_1="  ${ORANGE}${ICON_SUCCESS}${RESET} Build type: $BUILD_TYPE"
 
 # --- Step 2: Enter Description ---
 show_text_input "Enter release description" "$DEFAULT_DESCRIPTION" "$INFO_1"
 DESCRIPTION="$MENU_RESULT"
-INFO_2="${INFO_1}\n  ${GREEN}${ICON_SUCCESS}${RESET} Description: $DESCRIPTION"
+INFO_2="${INFO_1}\n  ${ORANGE}${ICON_SUCCESS}${RESET} Description: $DESCRIPTION"
 
 # --- Step 3: Select Groups ---
 show_multi_select_menu "Select tester group(s)" "$INFO_2" "${DEFAULT_TESTER_GROUPS[@]}"
@@ -292,7 +295,7 @@ CONFIRMED="$MENU_RESULT"
 if [ "$CONFIRMED" != "yes" ]; then
     clear
     show_banner
-    echo -e "  ${YELLOW}Build cancelled.${RESET}"
+    echo -e "  ${ORANGE}Build cancelled.${RESET}"
     echo ""
     exit 0
 fi
@@ -304,17 +307,17 @@ echo -e "  ${DARK_GRAY}----------------------------------------${RESET}"
 echo -e "  ${WHITE}Building & Uploading${RESET}"
 echo -e "  ${DARK_GRAY}----------------------------------------${RESET}"
 echo ""
-echo -e "  ${GREEN}${ICON_SUCCESS}${RESET} Release notes saved"
+echo -e "  ${ORANGE}${ICON_SUCCESS}${RESET} Release notes saved"
 echo ""
 
 # Run Assembler
-echo -e "  ${MAGENTA}${ICON_ARROW}${RESET} ${DARK_GRAY}Running${RESET} ${CYAN}./gradlew assemble${BUILD_TYPE}${RESET}"
+echo -e "  ${ORANGE}${ICON_ARROW}${RESET} ${DARK_GRAY}Running${RESET} ${ORANGE}./gradlew assemble${BUILD_TYPE}${RESET}"
 echo ""
 ./gradlew "assemble${BUILD_TYPE}"
 
 if [ $? -eq 0 ]; then
     echo ""
-    echo -e "  ${GREEN}${ICON_SUCCESS}${RESET} Build successful"
+    echo -e "  ${ORANGE}${ICON_SUCCESS}${RESET} Build successful"
 else
     echo ""
     echo -e "  ${RED}X Build failed${RESET}"
@@ -323,15 +326,15 @@ fi
 
 # Run Uploader
 echo ""
-echo -e "  ${MAGENTA}${ICON_ARROW}${RESET} ${DARK_GRAY}Running${RESET} ${CYAN}./gradlew appDistributionUpload${BUILD_TYPE}${RESET}"
+echo -e "  ${ORANGE}${ICON_ARROW}${RESET} ${DARK_GRAY}Running${RESET} ${ORANGE}./gradlew appDistributionUpload${BUILD_TYPE}${RESET}"
 echo ""
 ./gradlew "appDistributionUpload${BUILD_TYPE}"
 
 if [ $? -eq 0 ]; then
     echo ""
-    echo -e "  ${MAGENTA}----------------------------------------${RESET}"
-    echo -e "  ${MAGENTA}${ICON_STAR}${RESET} ${WHITE}Upload complete!${RESET}"
-    echo -e "  ${MAGENTA}----------------------------------------${RESET}"
+    echo -e "  ${ORANGE}----------------------------------------${RESET}"
+    echo -e "  ${ORANGE}${ICON_STAR}${RESET} ${WHITE}Upload complete!${RESET}"
+    echo -e "  ${ORANGE}----------------------------------------${RESET}"
     echo ""
 else
     echo ""

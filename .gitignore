@@ -13,3 +13,5 @@
 .externalNativeBuild
 .cxx
 local.properties
+app-distribution-service.json
+./app/google-services.json
