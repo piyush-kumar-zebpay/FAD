@@ -44,6 +44,9 @@ jobs:
         run: |
           echo "$FIREBASE_CREDENTIALS" > app/app-distribution-service.json
 
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
       - name: Build and Upload to Firebase
         env:
           BUILD_TYPE: ${{ inputs.buildType }}
